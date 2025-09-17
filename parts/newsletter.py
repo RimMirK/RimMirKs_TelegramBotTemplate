@@ -57,7 +57,8 @@ async def main(bot: Bot, db: DB, logger: Logger):
         rm = IM()
         rm.add(IB(
             await _('newsletter.switch_important_mode', on=not imp),
-            callback_data='newsletter:toggle_important_mode')
+            callback_data='newsletter:toggle_important_mode'),
+               user_id=obj.from_user.id
         )
     
         await bot.reply(msg, await _('newsletter.write_msg'), reply_markup=rm)
@@ -77,14 +78,14 @@ async def main(bot: Bot, db: DB, logger: Logger):
             await bot.edit_message_reply_markup(
                 c.message.chat.id, c.message.id,
                 reply_markup=IM().add(IB(await _("newsletter.switch_important_mode", on=True),
-                callback_data='newsletter:toggle_important_mode'))
+                callback_data='newsletter:toggle_important_mode', user_id=c.from_user.id))
             )
         else:
             await bot.set_data(c, important=True)
             await bot.edit_message_reply_markup(
                 c.message.chat.id, c.message.id,
                 reply_markup=IM().add(IB(await _("newsletter.switch_important_mode", on=False),
-                callback_data='newsletter:toggle_important_mode'))
+                callback_data='newsletter:toggle_important_mode'), user_id=c.from_user.id)
             )
         
     
@@ -136,7 +137,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
                 btns = row.split('\n\n')
                 buttons = []
                 for btn in btns:
-                    buttons.append(IB(*btn.split('\n')))   
+                    buttons.append(IB(*btn.split('\n'), user_id=0))   
                 rm.add(*buttons)
         
         await bot.set_data(msg, rm=rm)
@@ -177,7 +178,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
                 
         lnrm = IM()
         for lang in get_langs():
-            lnrm.add(IB(get_lang_title(lang), callback_data=f'newsletter:translated:{nid}:{lang}:{sm.chat.id}:{sm.id}'))
+            lnrm.add(IB(get_lang_title(lang), callback_data=f'newsletter:translated:{nid}:{lang}:{sm.chat.id}:{sm.id}', user_id=msg.from_user.id))
         
         await bot.reply(msg, await _('newsletter.translations_menu'), reply_markup=lnrm)
 

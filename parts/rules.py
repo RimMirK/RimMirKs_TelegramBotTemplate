@@ -45,7 +45,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
         
         if not await db.is_rules_confirmed(msg.from_user.id):
             rm = IM()
-            rm.add(IB(await _('rules.confirm_rules_btn'), callback_data='confirm_rules'))
+            rm.add(IB(await _('rules.confirm_rules_btn'), callback_data='confirm_rules', user_id=msg.from_user.id))
             
             await bot.reply(msg, await _('rules.confirm_rules_text', rules_url=url), reply_markup=rm)
         else:
@@ -59,6 +59,6 @@ async def main(bot: Bot, db: DB, logger: Logger):
         
         
         rm = IM()
-        rm.add(IB(await _('start_lang.get_started'), callback_data='get_started'))
+        rm.add(IB(await _('start_lang.get_started'), callback_data='get_started', user_id=c.from_user.id))
         
         await bot.edit(c.message, await _('rules.rules_confirmed_text'), reply_markup=rm)

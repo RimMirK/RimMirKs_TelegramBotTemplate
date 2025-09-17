@@ -54,9 +54,9 @@ async def main(bot: Bot, db: DB, logger: Logger):
         user = await db.get_user(obj.from_user.id)
         
         rm = IM()
-        rm.add(IB(await _('settings.copy_my_id_btn'), copy_text=CopyTextButton(obj.from_user.id)))
-        rm.add(IB(await _('settings.change_lang'), callback_data='settings:change_lang'))
-        rm.add(IB(await _('settings.change_timezone', timezone=user['timezone']), callback_data='settings:timezone'))
+        rm.add(IB(await _('settings.copy_my_id_btn'), copy_text=CopyTextButton(obj.from_user.id), user_id=0))
+        rm.add(IB(await _('settings.change_lang'), callback_data='settings:change_lang', user_id=obj.from_user.id))
+        rm.add(IB(await _('settings.change_timezone', timezone=user['timezone']), callback_data='settings:timezone', user_id=obj.from_user.id))
 
         await bot.answer(obj, await _('settings.text'), reply_markup=rm)
         
@@ -112,8 +112,8 @@ async def main(bot: Bot, db: DB, logger: Logger):
     async def _settings_change_lang(c: C):
         _ = await tr(c)
         rm = IM()
-        rm = get_langs_rm(rm, 'set_lang')
-        rm.add(IB(await _("back.back_btn"), callback_data='settings'))
+        rm = get_langs_rm(rm, c.from_user.id, 'set_lang')
+        rm.add(IB(await _("back.back_btn"), callback_data='settings', user_id=c.from_user.id))
         await bot.edit(
             c.message,
             " • ".join((await get_text_translations('settings.choose_lang', 'choose language')).values()),

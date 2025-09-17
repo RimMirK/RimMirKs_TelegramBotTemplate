@@ -54,7 +54,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
         if not await db.is_rules_confirmed(obj.from_user.id):
             
             rm = IM()
-            rm.add(IB(await _('rules.confirm_rules_btn'), callback_data='confirm_rules'))
+            rm.add(IB(await _('rules.confirm_rules_btn'), callback_data='confirm_rules'), user_id=obj.from_user.id)
             
             with open("rules/"+await _('rules_file', 'rules.en.md'), 'r', encoding='utf-8') as f:
                 url = paste(f.read(), 'md')
@@ -75,7 +75,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
         )  
         
         rm = IM()
-        rm.add(IB(await _('menu.copy_my_id_btn'), copy_text=CopyTextButton(obj.from_user.id)))
+        rm.add(IB(await _('menu.copy_my_id_btn'), copy_text=CopyTextButton(obj.from_user.id), user_id=0))
         
         if c:
             await bot.edit(m, text, reply_markup=rm)

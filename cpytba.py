@@ -17,6 +17,7 @@
 #  Telegram: @RimMirK
 
 
+import re
 from typing import List, Optional, Union
 from asyncio import sleep
 import logging
@@ -28,6 +29,35 @@ from telebot.async_telebot import AsyncTeleBot
 from telebot import types
 
 from database import DB
+
+
+import telebot.types as tbt
+import sys
+
+OriginalIB = tbt.InlineKeyboardButton
+
+class InlineKeyboardButton(OriginalIB):
+
+    def __init__(self, text: str, user_id: int, url: Optional[str]=None, callback_data: Optional[str]=None, web_app: Optional[tbt.WebAppInfo]=None,
+            switch_inline_query: Optional[str]=None, switch_inline_query_current_chat: Optional[str]=None,
+            switch_inline_query_chosen_chat: Optional[tbt.SwitchInlineQueryChosenChat]=None, callback_game=None, pay: Optional[bool]=None,
+            login_url: Optional[tbt.LoginUrl]=None, copy_text: Optional[tbt.CopyTextButton]=None, include_user_id: bool = True, **kwargs):
+        self.text: str = text
+        self.url: Optional[str] = url
+        self.callback_data: Optional[str] = f"{user_id}:{callback_data}" if include_user_id else callback_data
+        self.web_app: Optional[tbt.WebAppInfo] = web_app
+        self.switch_inline_query: Optional[str] = switch_inline_query
+        self.switch_inline_query_current_chat: Optional[str] = switch_inline_query_current_chat
+        self.switch_inline_query_chosen_chat: Optional[tbt.SwitchInlineQueryChosenChat] = switch_inline_query_chosen_chat
+        self.callback_game = callback_game # Not Implemented
+        self.pay: Optional[bool] = pay
+        self.login_url: Optional[tbt.LoginUrl] = login_url
+        self.copy_text: Optional[tbt.CopyTextButton] = copy_text
+
+
+tbt.InlineKeyboardButton = InlineKeyboardButton
+
+sys.modules["telebot.types"] = tbt
 
 
 
@@ -248,6 +278,70 @@ class CustomAsyncTeleBot(AsyncTeleBot):
             self.logger.debug(f'sleep {s}s')
             await sleep(s)
             return await self.send_limited(_chat_id, func, *args, **kwargs)
+    
+    def command(self, commands: List[str], starts=False, allow_banned=False, pass_bot=False, **kwargs):
+        def _flt(m: types.Message):
+            if not m.text:
+                return False
+            if m.forward_origin is not None:
+                return False
+            message_text = m.text.lower()
+            for command in commands:
+                command_lower = command.lower()
+                if starts or command.startswith('/'):
+                    pattern = r'^' + re.escape(command_lower) + r'(@\w+)?(\s|$)'
+                    if re.match(pattern, message_text):
+                        return True
+                else:
+                    if message_text == command_lower:
+                        return True
+            return False
+
+        def inner(func):
+            @self.message_handler(func=_flt, **kwargs)
+            async def _dec(m: types.Message):
+                
+                if await self.db.is_banned(m.from_user.id):
+                    if not allow_banned:
+                        return
+                    
+                m.reply = lambda *args, **kwargs: self.reply(m, *args, **kwargs)
+                m.edit  = lambda *args, **kwargs: self. edit(m, *args, **kwargs)
+                return await func(*((self, m) if pass_bot else (m,)))
+            return func
+
+        return inner
+    
+    def callback(self, data: str, starts=False, persistent=True,  allow_banned=False, **kwargs):
+        def _flt(c):
+            if starts or persistent:
+                if c.data.startswith(data):
+                    return True
+            else:
+                if c.data == data:
+                    return True
+            return False
+        
+        def inner(func):
+            @self.callback_query_handler(func=_flt, **kwargs)
+            async def _dec(c):
+                
+                
+                if await self.db.is_banned(c.from_user.id):
+                    if not allow_banned:
+                        return await self.answer_callback_query(c.id)
+                
+
+                if persistent:
+                    if int(c.data.split(":")[0]) == c.from_user.id:
+                        return await func(c)
+                    await self.answer_callback_query(c.id, "🚫 Это не твоя кнопка!", True)
+                else:
+                    return await func(c)
+            return func
+                    
+        return inner
+    
     
     async def state(self, obj: types.Message | types.CallbackQuery, state: str, **_params):
         """

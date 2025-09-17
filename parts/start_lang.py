@@ -52,9 +52,9 @@ async def main(bot: Bot, db: DB, logger: Logger):
         _ = await tr(msg)
         rm = IM()
         if len(msg.text.split()) == 1:
-            rm = get_langs_rm(rm, 'start')
+            rm = get_langs_rm(rm, 'start', user_id=msg.from_user.id)
 
-            rm.add(IB(await _('start_lang.get_started'), callback_data='get_started'))
+            rm.add(IB(await _('start_lang.get_started'), callback_data='get_started', user_id=msg.from_user.id))
 
             await bot.reply(msg, await _('start_lang.start_text'), reply_markup=rm)
         else:
@@ -74,9 +74,9 @@ async def main(bot: Bot, db: DB, logger: Logger):
             case 'start':
                 await bot.answer_callback_query(c.id, await _('start_lang.lang_set_to'))
                 rm = IM()
-                rm = get_langs_rm(rm, 'start')
+                rm = get_langs_rm(rm, 'start', user_id=c.from_user.id)
                 
-                rm.add(IB(await _('start_lang.get_started'), callback_data='get_started'))
+                rm.add(IB(await _('start_lang.get_started'), callback_data='get_started', user_id=c.from_user.id))
 
                 await bot.edit(c.message, await _('start_lang.start_text'), reply_markup=rm)
             case 'set_lang':
@@ -88,7 +88,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
         _ = await tr(msg)
 
         rm = IM()
-        rm = get_langs_rm(rm, 'set_lang')
+        rm = get_langs_rm(rm, 'set_lang', user_id=msg.from_user.id)
 
 
         await bot.reply(
