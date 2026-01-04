@@ -11,7 +11,9 @@ This will be a template for my Telegram bots built with TeleBot. In this templat
 
 Until now, I hadn’t created a proper “template” structure—I just copied code from old bots to new ones. Now I decided to gather everything into a single template, organize it, improve it, and release it publicly!
 
-Currently, the process of “organizing and refining” is ongoing in the dev branch.
+Currently, the process of “organizing and refining” is ongoing in the `dev` branch.
+
+**Stable version is in the `stable` brabch.**
 
 ---
 
@@ -21,5 +23,6 @@ Currently, the process of “organizing and refining” is ongoing in the dev br
 
 Я до этого не выделял такую структуру как "шаблон" а просто переносил каждый раз код со старых ботов на новые. Сейчас я решил собрать это все как шаблон, привести в порядок, доработать, и выложить в открытый доступ!
 
-Пока-что идёт процесс "провождения в порядок и доработка", прогресс в дев ветке
+Пока-что идёт процесс "провождения в порядок и доработка", прогресс в `dev` ветке
 
+**Стабильная (рабочая) версия в `sable` ветке**
