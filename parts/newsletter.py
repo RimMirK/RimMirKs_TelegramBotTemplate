@@ -57,10 +57,10 @@ async def main(bot: Bot, db: DB, logger: Logger):
         rm = IM()
         rm.add(IB(
             await _('newsletter.switch_important_mode', on=not imp),
-            callback_data='newsletter:toggle_important_mode'),
-               user_id=obj.from_user.id
-        )
-    
+            callback_data='newsletter:toggle_important_mode',
+            user_id=obj.from_user.id
+        ))
+
         await bot.reply(msg, await _('newsletter.write_msg'), reply_markup=rm)
         
     

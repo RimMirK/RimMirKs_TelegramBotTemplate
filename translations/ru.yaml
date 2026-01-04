@@ -24,7 +24,7 @@ coming_soon: В разработке, Скоро будет!
 start_lang:
     lang_set_to: Язык установлен на Русский!
     start_text: |
-        Привет! Я бот!
+        Привет!
 
         Выберите язык:
 
@@ -61,11 +61,7 @@ rules:
 
 menu:
     menu_text: |
-        <b>Меню</b>
-        
-        🆔 ID: <code>{{ user_id }}</code>
-
-    copy_my_id_btn: 🆔 Скопировать свой ID
+        👋 Привет! Я бот для ...
 
 settings:
     text: <b>Настройки</b>
@@ -218,7 +214,7 @@ newsletter:
 
     errors_list: |
         {{ "<blockquote expandable>"|safe if format|default("html") == "html" else "" }}{% for user, ex in errors %}
-        {{ "<code>"|safe if format|default("html") == "html" else ("`" if format|default("html") == 'md' else '')}}{{ user }}{{ '</code>'|safe if format|default('html') == 'html' else ('`' if format|default('html') == 'md' else '') }}: {{ ex.description or ex }}
+        {{ "<code>"|safe if format|default("html") == "html" else ("`" if format|default("html") == 'md' else '')}}{{ user }}{{ '</code>'|safe if format|default('html') == 'html' else ('`' if format|default('html') == 'md' else '') }}: {{ ex.description if hasattr(ex, 'description') or ex }}
         {% endfor %}
         {{ "</blockquote>"|safe if format|default("html") == "html" else "" }}
 

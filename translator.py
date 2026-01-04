@@ -74,6 +74,7 @@ def plural_ru(n: int, forms: tuple[str, str, str]) -> str:
     return forms[2]
 
 jinja_env.globals['plural_ru'] = plural_ru
+jinja_env.globals['hasattr'] = hasattr
 
 class Translator:
     def __init__(self, lang, data):
@@ -149,6 +150,9 @@ async def get_text_translations(key: str, default="") -> dict:
 
     return {lang: await get_translator(lang)(key, default) for lang in trans_data}
 
+
+
+# AI TRANSLATOR 
 
 from langdetect import detect, DetectorFactory
 from utils.file_cache import file_cache

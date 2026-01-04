@@ -21,7 +21,8 @@
 from telebot.types import (
     InlineKeyboardMarkup as IM, InlineKeyboardButton as IB,
     CallbackQuery as C, Message, Message as M,
-    CopyTextButton, ReplyKeyboardRemove as RKR
+    CopyTextButton, ReplyKeyboardRemove as RKR,
+    # ReplyKeyboardMarkup as RM, KeyboardButton as KB
 )
 
 from cpytba import CustomAsyncTeleBot as Bot
@@ -38,6 +39,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
 
     bot.add_command(1, ['menu', 'get_started'], await get_text_translations("cmd_desc.menu"))
     @bot.callback_query_handler(cs='get_started')
+    @bot.callback_query_handler(c='menu')
     @bot.message_handler(['get_started', 'menu'])
     @bot.message_handler(func=flt)
     async def _get_started(obj: C|M):
@@ -54,7 +56,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
         if not await db.is_rules_confirmed(obj.from_user.id):
             
             rm = IM()
-            rm.add(IB(await _('rules.confirm_rules_btn'), callback_data='confirm_rules'), user_id=obj.from_user.id)
+            rm.add(IB(await _('rules.confirm_rules_btn'), callback_data='confirm_rules', user_id=obj.from_user.id))
             
             with open("rules/"+await _('rules_file', 'rules.en.md'), 'r', encoding='utf-8') as f:
                 url = paste(f.read(), 'md')
@@ -74,8 +76,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
             user_id=obj.from_user.id,
         )  
         
-        rm = IM()
-        rm.add(IB(await _('menu.copy_my_id_btn'), copy_text=CopyTextButton(obj.from_user.id), user_id=0))
+        rm = None
         
         if c:
             await bot.edit(m, text, reply_markup=rm)

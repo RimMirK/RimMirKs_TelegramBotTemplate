@@ -26,6 +26,7 @@ import time
 import aiosqlite
 
 from utils import format_date
+from config import DEFAULT_LANG
  
  
 class DB:
@@ -75,14 +76,14 @@ class DB:
 
     async def create_tables(self):
         
-        await self.sql("""
+        await self.sql(f"""
             CREATE TABLE IF NOT EXISTS users (
                 id              INTEGER PRIMARY KEY
                                         NOT NULL,
                 user_id         INTEGER UNIQUE
                                         NOT NULL,
                 reg             NUMERIC,
-                lang            TEXT    DEFAULT en,
+                lang            TEXT    DEFAULT {DEFAULT_LANG},
                 timezone        TEXT    DEFAULT UTC,
                 rules_confirmed INTEGER DEFAULT (0),
                 banned          INTEGER DEFAULT (0),
@@ -207,7 +208,9 @@ class DB:
         query = "SELECT * from users" if important else "SELECT * from users where newsletter = true" 
         for row in await self.sql(query, asdict=True):
             yield row
-            
+    
+    async def get_users_count(self) -> int:
+        return (await self.sql("SELECT COUNT(*) FROM users"))[0][0]
             
     # LANGUAGES #
     

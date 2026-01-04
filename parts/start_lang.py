@@ -45,14 +45,17 @@ async def main(bot: Bot, db: DB, logger: Logger):
         if await db.register(msg.from_user.id):
             _ = await tr(msg)
             if LOG_REGISTER:
-                template = jinja_env.from_string(LOG_REGISTER_TEMPLATE)
-                msg.from_user.link = user_link(msg.from_user)
-                text = await template.render_async(bot=bot, _=_, db=db, user=msg.from_user, chat=msg.chat, msg=msg)
-                await bot.send_message(LOG_CHAT_ID, text)
+                try:
+                    template = jinja_env.from_string(LOG_REGISTER_TEMPLATE)
+                    msg.from_user.link = user_link(msg.from_user)
+                    text = await template.render_async(bot=bot, _=_, db=db, user=msg.from_user, chat=msg.chat, msg=msg)
+                    await bot.send_message(LOG_CHAT_ID, text)
+                except Exception as e:
+                    logger.error(f"Error in log register: {e}", exc_info=True)
         _ = await tr(msg)
         rm = IM()
         if len(msg.text.split()) == 1:
-            rm = get_langs_rm(rm, 'start', user_id=msg.from_user.id)
+            rm = get_langs_rm(rm, user_id=msg.from_user.id)
 
             rm.add(IB(await _('start_lang.get_started'), callback_data='get_started', user_id=msg.from_user.id))
 
@@ -88,7 +91,7 @@ async def main(bot: Bot, db: DB, logger: Logger):
         _ = await tr(msg)
 
         rm = IM()
-        rm = get_langs_rm(rm, 'set_lang', user_id=msg.from_user.id)
+        rm = get_langs_rm(rm, user_id=msg.from_user.id)
 
 
         await bot.reply(

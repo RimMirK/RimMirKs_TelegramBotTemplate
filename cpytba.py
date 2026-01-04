@@ -38,10 +38,10 @@ OriginalIB = tbt.InlineKeyboardButton
 
 class InlineKeyboardButton(OriginalIB):
 
-    def __init__(self, text: str, user_id: int, url: Optional[str]=None, callback_data: Optional[str]=None, web_app: Optional[tbt.WebAppInfo]=None,
+    def __init__(self, text: str, user_id: int=None, url: Optional[str]=None, callback_data: Optional[str]=None, web_app: Optional[tbt.WebAppInfo]=None,
             switch_inline_query: Optional[str]=None, switch_inline_query_current_chat: Optional[str]=None,
             switch_inline_query_chosen_chat: Optional[tbt.SwitchInlineQueryChosenChat]=None, callback_game=None, pay: Optional[bool]=None,
-            login_url: Optional[tbt.LoginUrl]=None, copy_text: Optional[tbt.CopyTextButton]=None, include_user_id: bool = True, **kwargs):
+            login_url: Optional[tbt.LoginUrl]=None, copy_text: Optional[tbt.CopyTextButton]=None, include_user_id: bool = False, **kwargs):
         self.text: str = text
         self.url: Optional[str] = url
         self.callback_data: Optional[str] = f"{user_id}:{callback_data}" if include_user_id else callback_data

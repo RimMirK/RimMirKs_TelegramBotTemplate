@@ -18,5 +18,5 @@
 
 
 
-# Here  just   test     something not related   to TG
-# Здесь просто тестируй что-то    не  связанное с  ТГ
+# Here  just   test     something   not related  to TG
+# Здесь просто тестируй что-то, что не  связанно с  ТГ
