@@ -25,4 +25,4 @@ Currently, the process of “organizing and refining” is ongoing in the `dev` 
 
 Пока-что идёт процесс "провождения в порядок и доработка", прогресс в `dev` ветке
 
-**Стабильная (рабочая) версия в `sable` ветке**
+**Стабильная (рабочая) версия в `stable` ветке**
